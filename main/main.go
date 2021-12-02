@@ -22,6 +22,12 @@ func HashFunc(passValue int)string {
 	return hashValue
 }
 
+// InsertToHashTable -> using map to store unique code
+// and value of the code that is the password
+func InsertToHashTable(hashTable* map[string]string, hashedPassword* string, realPassword string) {
+	(*hashTable)[*hashedPassword] = realPassword
+}
+
 func RandPass(passwordLength int)string {
 	var (
 		lowerCaseChar  = "abcdefghijklmnopqrstuvwxyz"
@@ -106,6 +112,7 @@ func main() {
 			}
 			hashedPass := HashFunc(valuePassword)
 			fmt.Println("Berikut kode unik password anda :[",hashedPass,"]")
+			InsertToHashTable(&hashTablePassword, &hashedPass, password)
 			break
 		case 2:
 			fmt.Print("Ketik kode unik yang telah diberikan :")
