@@ -10,7 +10,7 @@ import (
 // HashFunc -> to convert password value into unique code
 // that stored in Hash Table later on.
 func HashFunc(passValue int)string {
-	charSet := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%&*"
+	charSet := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	var tmp int
 	var hashValue string
 	hashValue = ""
@@ -25,9 +25,26 @@ func HashFunc(passValue int)string {
 // InsertToHashTable -> using map to store unique code
 // and value of the code that is the password
 func InsertToHashTable(hashTable* map[string]string, hashedPassword* string, realPassword string) {
+	// Generate random iterator
+	rand.Seed(time.Now().Unix())
+	randNumber := rand.Int()
+
+	var value bool
+	numberSet 	   := "0123456789"
+	temp := *hashedPassword
+
+	// Avoid collision
+	// Here I'm adding another random number to the hashedPassword (if only collision appears)
+	_, value = (*hashTable)[temp]
+	if value == true {
+		temp += string(numberSet[randNumber])
+	}
+	*hashedPassword = temp
 	(*hashTable)[*hashedPassword] = realPassword
 }
 
+// RandPass -> random a bunch of char set based on
+// time in local operating system
 func RandPass(passwordLength int)string {
 	var (
 		lowerCaseChar  = "abcdefghijklmnopqrstuvwxyz"
@@ -77,11 +94,10 @@ func RandPass(passwordLength int)string {
 
 func main() {
 	var (
-		input int
-		size  int
-		uniqueCode string
+		input      int
+		size       int
+		uniqueCode = ""
 	)
-	uniqueCode = ""
 	hashTablePassword := make(map[string]string)
 	fmt.Println("Nama  : Pande Putu Devo Punda Maheswara")
 	fmt.Println("NIM   : 2008561107                     ")
@@ -103,6 +119,10 @@ func main() {
 			_, err := fmt.Scanln(&size)
 			if err != nil {
 				return 
+			}
+			if size < 8 {
+				fmt.Println("Password terlalu pendek!")
+				break
 			}
 			password := RandPass(size)
 			fmt.Println("Password :", password)
@@ -129,10 +149,11 @@ func main() {
 			}
 			break
 		case 3:
-			fmt.Println("Daftar password yang telah dibuat")
+			fmt.Println("Daftar password :")
 			for key, value := range hashTablePassword {
-				fmt.Println("Unique Code :",key,"Value :", value)
+				fmt.Println("Unique Code :",key,"Password :", value)
 			}
+			break
 		}
 	}
 }
