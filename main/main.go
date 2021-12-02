@@ -7,6 +7,21 @@ import (
 	"time"
 )
 
+// HashFunc -> to convert password value into unique code
+// that stored in Hash Table later on.
+func HashFunc(passValue int)string {
+	charSet := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%&*"
+	var tmp int
+	var hashValue string
+	hashValue = ""
+	for passValue != 0 {
+		tmp = passValue % len(charSet)
+		passValue = passValue / 3
+		hashValue += string(charSet[tmp])
+	}
+	return hashValue
+}
+
 func RandPass(passwordLength int)string {
 	var (
 		lowerCaseChar  = "abcdefghijklmnopqrstuvwxyz"
@@ -58,7 +73,10 @@ func main() {
 	var (
 		input int
 		size  int
+		uniqueCode string
 	)
+	uniqueCode = ""
+	hashTablePassword := make(map[string]string)
 	fmt.Println("Nama  : Pande Putu Devo Punda Maheswara")
 	fmt.Println("NIM   : 2008561107                     ")
 	fmt.Println("Kelas : B                              ")
@@ -82,7 +100,32 @@ func main() {
 			}
 			password := RandPass(size)
 			fmt.Println("Password :", password)
+			valuePassword := 0
+			for _, v := range password {
+				valuePassword += int(v)
+			}
+			hashedPass := HashFunc(valuePassword)
+			fmt.Println("Berikut kode unik password anda :[",hashedPass,"]")
 			break
+		case 2:
+			fmt.Print("Ketik kode unik yang telah diberikan :")
+			_, err := fmt.Scanln(&uniqueCode)
+			if err != nil {
+				return
+			}
+			if uniqueCode == "" {
+				fmt.Println("Tidak boleh kosong!")
+				break
+			}
+			if value, found := hashTablePassword[uniqueCode] ; found ==true {
+				fmt.Println("Password asli :", value)
+			}
+			break
+		case 3:
+			fmt.Println("Daftar password yang telah dibuat")
+			for key, value := range hashTablePassword {
+				fmt.Println("Unique Code :",key,"Value :", value)
+			}
 		}
 	}
 }
